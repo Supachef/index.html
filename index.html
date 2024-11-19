@@ -7,33 +7,43 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             text-align: center;
             padding: 20px;
-            background-color: #f0f0f0;
-            color: #333;
-            background-image: url('https://example.com/background.jpg'); /* Замените на URL вашего фона */
-            background-size: cover;
-            background-position: center;
+            background: linear-gradient(135deg, #6B73FF 0%, #000DFF 100%);
+            color: #fff;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .container {
             max-width: 600px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.8);
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
             padding: 20px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
         #shark {
             width: 150px;
             height: 150px;
             cursor: pointer;
             margin-top: 20px;
+            transition: transform 0.3s;
+        }
+        #shark:active {
+            transform: scale(0.95);
         }
         #coins {
             margin-top: 20px;
             font-size: 24px;
-            color: #4CAF50;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
         .nav {
             display: flex;
@@ -49,9 +59,13 @@
             border-radius: 5px;
             cursor: pointer;
             margin: 0 10px;
+            transition: background-color 0.3s;
+        }
+        .nav button:hover {
+            background-color: #45a049;
         }
         .nav button.active {
-            background-color: #45a049;
+            background-color: #388e3c;
         }
         .shop {
             display: none;
@@ -64,7 +78,15 @@
             border: 1px solid #ddd;
             border-radius: 5px;
             margin-top: 10px;
-            background-color: #f9f9f9;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .promo-code:hover {
+            background-color: rgba(255, 255, 255, 0.2);
         }
     </style>
 </head>
