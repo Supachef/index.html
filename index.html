@@ -199,6 +199,13 @@
                 <button id="claimReward">Claim</button>
                 <button id="watchAd">Watch Ad (x2)</button>
             </div>
+            <button id="watchAdButton">Watch Ad for 100 Coins</button>
+            <div id="videoContainer" style="display: none;">
+                <video id="adVideo" width="320" height="240" controls>
+                    <source src="https://example.com/ad.mp4" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
+            </div>
         </div>
         <div id="shopSection" class="section">
             <h2>Shop</h2>
@@ -383,6 +390,30 @@
                 rewardSound.play();
                 checkAchievements();
             }
+        }
+
+        document.getElementById('watchAdButton').addEventListener('click', function() {
+            // Показать видео
+            showVideo();
+        });
+
+        function showVideo() {
+            const videoContainer = document.getElementById('videoContainer');
+            const adVideo = document.getElementById('adVideo');
+            videoContainer.style.display = 'block';
+            adVideo.play();
+
+            adVideo.addEventListener('ended', function() {
+                videoContainer.style.display = 'none';
+                rewardUser();
+            });
+        }
+
+        function rewardUser() {
+            coins += 100;
+            localStorage.setItem('coins', coins);
+            document.getElementById('coins').innerText = 'Coins: ' + coins;
+            alert('You have earned 100 coins for watching the ad!');
         }
 
         checkDailyReward();
