@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clicker Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 20px;
+        }
+        #clickButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #coins {
+            margin-top: 20px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Clicker Mini App</h1>
+    <button id="clickButton">Click Me!</button>
+    <div id="coins">Coins: 0</div>
+
+    <script>
+        let coins = 0;
+
+        document.getElementById('clickButton').addEventListener('click', function() {
+            coins++;
+            document.getElementById('coins').innerText = 'Coins: ' + coins;
+        });
+
+        Telegram.WebApp.onEvent('mainButtonClicked', function() {
+            Telegram.WebApp.sendData(JSON.stringify({ coins: coins }));
+        });
+    </script>
+</body>
+</html>
