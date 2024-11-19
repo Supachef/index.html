@@ -111,6 +111,26 @@
         .daily-reward button:hover {
             background-color: #45a049;
         }
+        .achievements {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .achievements button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+        }
+        .achievements button:hover {
+            background-color: #45a049;
+        }
         @media (max-width: 600px) {
             .container {
                 padding: 10px;
@@ -136,6 +156,13 @@
             .promo-code {
                 font-size: 14px;
             }
+            .achievements {
+                font-size: 16px;
+            }
+            .achievements button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -145,6 +172,7 @@
         <div class="nav">
             <button id="clickerTab" class="active">Clicker</button>
             <button id="shopTab">Shop</button>
+            <button id="achievementsTab">Achievements</button>
         </div>
         <div id="clickerSection">
             <img id="shark" src="https://example.com/shark.png" alt="Shark"> <!-- Замените на URL вашей акулы -->
@@ -161,11 +189,18 @@
                 <!-- Promo codes will be inserted here -->
             </div>
         </div>
+        <div id="achievementsSection" class="achievements">
+            <h2>Achievements</h2>
+            <div id="achievementsList">
+                <!-- Achievements will be inserted here -->
+            </div>
+        </div>
     </div>
 
     <script>
         let coins = parseInt(localStorage.getItem('coins')) || 0;
         let lastClaimDate = localStorage.getItem('lastClaimDate');
+        let achievements = JSON.parse(localStorage.getItem('achievements')) || [];
         const promoCodes = [
             { code: 'PROMO1', cost: 10 },
             { code: 'PROMO2', cost: 20 },
@@ -173,30 +208,62 @@
         ];
         const dailyReward = 10;
         const adRewardMultiplier = 2;
+        const achievementLevels = [
+            { name: 'Новичок', coinsRequired: 10 },
+            { name: 'Начинающий', coinsRequired: 50 },
+            { name: 'Опытный', coinsRequired: 100 },
+            { name: 'Мастер', coinsRequired: 200 },
+            { name: 'Легенда', coinsRequired: 500 },
+            { name: 'Суперзвезда', coinsRequired: 1000 },
+            { name: 'Герой', coinsRequired: 2000 },
+            { name: 'Чемпион', coinsRequired: 5000 },
+            { name: 'Непобедимый', coinsRequired: 10000 },
+            { name: 'Бог кликера', coinsRequired: 20000 }
+        ];
 
         // Активация полноэкранного режима
         Telegram.WebApp.expand();
         Telegram.WebApp.enableClosingConfirmation();
 
+        // Звуковые эффекты
+        const clickSound = new Audio('https://example.com/click.mp3'); // Замените на URL вашего звукового файла
+        const rewardSound = new Audio('https://example.com/reward.mp3'); // Замените на URL вашего звукового файла
+
         document.getElementById('shark').addEventListener('click', function() {
             coins++;
             localStorage.setItem('coins', coins);
             document.getElementById('coins').innerText = 'Coins: ' + coins;
+            clickSound.play();
+            checkAchievements();
         });
 
         document.getElementById('clickerTab').addEventListener('click', function() {
             document.getElementById('clickerTab').classList.add('active');
             document.getElementById('shopTab').classList.remove('active');
+            document.getElementById('achievementsTab').classList.remove('active');
             document.getElementById('clickerSection').style.display = 'block';
             document.getElementById('shopSection').style.display = 'none';
+            document.getElementById('achievementsSection').style.display = 'none';
         });
 
         document.getElementById('shopTab').addEventListener('click', function() {
-            document.getElementById('shopTab').classList.add('active');
             document.getElementById('clickerTab').classList.remove('active');
+            document.getElementById('shopTab').classList.add('active');
+            document.getElementById('achievementsTab').classList.remove('active');
             document.getElementById('clickerSection').style.display = 'none';
             document.getElementById('shopSection').style.display = 'block';
+            document.getElementById('achievementsSection').style.display = 'none';
             renderPromoCodes();
+        });
+
+        document.getElementById('achievementsTab').addEventListener('click', function() {
+            document.getElementById('clickerTab').classList.remove('active');
+            document.getElementById('shopTab').classList.remove('active');
+            document.getElementById('achievementsTab').classList.add('active');
+            document.getElementById('clickerSection').style.display = 'none';
+            document.getElementById('shopSection').style.display = 'none';
+            document.getElementById('achievementsSection').style.display = 'block';
+            renderAchievements();
         });
 
         function renderPromoCodes() {
@@ -217,6 +284,31 @@
                     }
                 });
                 promoCodesContainer.appendChild(promoElement);
+            });
+        }
+
+        function renderAchievements() {
+            const achievementsContainer = document.getElementById('achievementsList');
+            achievementsContainer.innerHTML = '';
+            achievementLevels.forEach(level => {
+                const achievementElement = document.createElement('div');
+                achievementElement.className = 'achievement';
+                achievementElement.innerText = `${level.name} - ${level.coinsRequired} coins`;
+                if (achievements.includes(level.name)) {
+                    achievementElement.classList.add('achieved');
+                }
+                achievementsContainer.appendChild(achievementElement);
+            });
+        }
+
+        function checkAchievements() {
+            achievementLevels.forEach(level => {
+                if (coins >= level.coinsRequired && !achievements.includes(level.name)) {
+                    achievements.push(level.name);
+                    localStorage.setItem('achievements', JSON.stringify(achievements));
+                    alert(`Achievement unlocked: ${level.name}!`);
+                    renderAchievements();
+                }
             });
         }
 
@@ -243,6 +335,8 @@
                 localStorage.setItem('lastClaimDate', currentDate);
                 document.getElementById('coins').innerText = 'Coins: ' + coins;
                 document.getElementById('dailyReward').style.display = 'none';
+                rewardSound.play();
+                checkAchievements();
             }
         });
 
@@ -263,10 +357,13 @@
                 localStorage.setItem('lastClaimDate', currentDate);
                 document.getElementById('coins').innerText = 'Coins: ' + coins;
                 document.getElementById('dailyReward').style.display = 'none';
+                rewardSound.play();
+                checkAchievements();
             }
         }
 
         checkDailyReward();
+        renderAchievements();
     </script>
 </body>
 </html>
