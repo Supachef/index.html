@@ -10,30 +10,131 @@
             font-family: Arial, sans-serif;
             text-align: center;
             padding: 20px;
+            background-color: #f0f0f0;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
         #clickButton {
-            padding: 10px 20px;
-            font-size: 16px;
+            padding: 15px 30px;
+            font-size: 18px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
             cursor: pointer;
+            margin-top: 20px;
         }
         #coins {
             margin-top: 20px;
-            font-size: 20px;
+            font-size: 24px;
+            color: #4CAF50;
+        }
+        .nav {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .nav button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px;
+        }
+        .nav button.active {
+            background-color: #45a049;
+        }
+        .shop {
+            display: none;
+        }
+        .shop.active {
+            display: block;
+        }
+        .promo-code {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 10px;
+            background-color: #f9f9f9;
         }
     </style>
 </head>
 <body>
-    <h1>Clicker Mini App</h1>
-    <button id="clickButton">Click Me!</button>
-    <div id="coins">Coins: 0</div>
+    <div class="container">
+        <h1>Clicker Mini App</h1>
+        <div class="nav">
+            <button id="clickerTab" class="active">Clicker</button>
+            <button id="shopTab">Shop</button>
+        </div>
+        <div id="clickerSection">
+            <button id="clickButton">Click Me!</button>
+            <div id="coins">Coins: 0</div>
+        </div>
+        <div id="shopSection" class="shop">
+            <h2>Shop</h2>
+            <div id="promoCodes">
+                <!-- Promo codes will be inserted here -->
+            </div>
+        </div>
+    </div>
 
     <script>
         let coins = 0;
+        const promoCodes = [
+            { code: 'PROMO1', cost: 10 },
+            { code: 'PROMO2', cost: 20 },
+            { code: 'PROMO3', cost: 30 }
+        ];
 
         document.getElementById('clickButton').addEventListener('click', function() {
             coins++;
             document.getElementById('coins').innerText = 'Coins: ' + coins;
         });
+
+        document.getElementById('clickerTab').addEventListener('click', function() {
+            document.getElementById('clickerTab').classList.add('active');
+            document.getElementById('shopTab').classList.remove('active');
+            document.getElementById('clickerSection').style.display = 'block';
+            document.getElementById('shopSection').style.display = 'none';
+        });
+
+        document.getElementById('shopTab').addEventListener('click', function() {
+            document.getElementById('shopTab').classList.add('active');
+            document.getElementById('clickerTab').classList.remove('active');
+            document.getElementById('clickerSection').style.display = 'none';
+            document.getElementById('shopSection').style.display = 'block';
+            renderPromoCodes();
+        });
+
+        function renderPromoCodes() {
+            const promoCodesContainer = document.getElementById('promoCodes');
+            promoCodesContainer.innerHTML = '';
+            promoCodes.forEach(promo => {
+                const promoElement = document.createElement('div');
+                promoElement.className = 'promo-code';
+                promoElement.innerText = `${promo.code} - ${promo.cost} coins`;
+                promoElement.addEventListener('click', function() {
+                    if (coins >= promo.cost) {
+                        coins -= promo.cost;
+                        document.getElementById('coins').innerText = 'Coins: ' + coins;
+                        alert(`You have redeemed ${promo.code}!`);
+                    } else {
+                        alert('Not enough coins!');
+                    }
+                });
+                promoCodesContainer.appendChild(promoElement);
+            });
+        }
 
         Telegram.WebApp.onEvent('mainButtonClicked', function() {
             Telegram.WebApp.sendData(JSON.stringify({ coins: coins }));
