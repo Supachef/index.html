@@ -12,22 +12,21 @@
             padding: 20px;
             background-color: #f0f0f0;
             color: #333;
+            background-image: url('https://example.com/background.jpg'); /* Замените на URL вашего фона */
+            background-size: cover;
+            background-position: center;
         }
         .container {
             max-width: 600px;
             margin: 0 auto;
-            background: #fff;
+            background: rgba(255, 255, 255, 0.8);
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
-        #clickButton {
-            padding: 15px 30px;
-            font-size: 18px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 5px;
+        #shark {
+            width: 150px;
+            height: 150px;
             cursor: pointer;
             margin-top: 20px;
         }
@@ -77,7 +76,7 @@
             <button id="shopTab">Shop</button>
         </div>
         <div id="clickerSection">
-            <button id="clickButton">Click Me!</button>
+            <img id="shark" src="https://example.com/shark.png" alt="Shark"> <!-- Замените на URL вашей акулы -->
             <div id="coins">Coins: 0</div>
         </div>
         <div id="shopSection" class="shop">
@@ -89,15 +88,16 @@
     </div>
 
     <script>
-        let coins = 0;
+        let coins = parseInt(localStorage.getItem('coins')) || 0;
         const promoCodes = [
             { code: 'PROMO1', cost: 10 },
             { code: 'PROMO2', cost: 20 },
             { code: 'PROMO3', cost: 30 }
         ];
 
-        document.getElementById('clickButton').addEventListener('click', function() {
+        document.getElementById('shark').addEventListener('click', function() {
             coins++;
+            localStorage.setItem('coins', coins);
             document.getElementById('coins').innerText = 'Coins: ' + coins;
         });
 
@@ -126,6 +126,7 @@
                 promoElement.addEventListener('click', function() {
                     if (coins >= promo.cost) {
                         coins -= promo.cost;
+                        localStorage.setItem('coins', coins);
                         document.getElementById('coins').innerText = 'Coins: ' + coins;
                         alert(`You have redeemed ${promo.code}!`);
                     } else {
@@ -139,6 +140,8 @@
         Telegram.WebApp.onEvent('mainButtonClicked', function() {
             Telegram.WebApp.sendData(JSON.stringify({ coins: coins }));
         });
+
+        document.getElementById('coins').innerText = 'Coins: ' + coins;
     </script>
 </body>
 </html>
