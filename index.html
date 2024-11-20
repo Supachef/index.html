@@ -196,7 +196,7 @@
             <button id="achievementsTab">Achievements</button>
         </div>
         <div id="clickerSection" class="section active">
-            <img id="star" src="https://example.com/star.png" alt="Star"> <!-- Замените на URL вашей звезды -->
+            <img id="star" src="https://raw.githubusercontent.com/<your-username>/clicker-mini-app-images/main/star.png" alt="Star">
             <div id="coins">Coins: 0</div>
             <div id="dailyReward" class="daily-reward">
                 <p>Daily Reward: <span id="rewardAmount">10</span> coins</p>
@@ -229,6 +229,7 @@
         let coins = parseInt(localStorage.getItem('coins')) || 0;
         let lastClaimDate = localStorage.getItem('lastClaimDate');
         let achievements = JSON.parse(localStorage.getItem('achievements')) || [];
+        let telegramStars = parseInt(localStorage.getItem('telegramStars')) || 0;
         const promoCodes = [
             { code: 'PROMO1', cost: 10 },
             { code: 'PROMO2', cost: 20 },
@@ -237,16 +238,16 @@
         const dailyReward = 10;
         const adRewardMultiplier = 2;
         const achievementLevels = [
-            { name: 'Новичок', coinsRequired: 10, icon: 'https://example.com/icons/novice.png' },
-            { name: 'Начинающий', coinsRequired: 50, icon: 'https://example.com/icons/beginner.png' },
-            { name: 'Опытный', coinsRequired: 100, icon: 'https://example.com/icons/experienced.png' },
-            { name: 'Мастер', coinsRequired: 200, icon: 'https://example.com/icons/master.png' },
-            { name: 'Легенда', coinsRequired: 500, icon: 'https://example.com/icons/legend.png' },
-            { name: 'Суперзвезда', coinsRequired: 1000, icon: 'https://example.com/icons/superstar.png' },
-            { name: 'Герой', coinsRequired: 2000, icon: 'https://example.com/icons/hero.png' },
-            { name: 'Чемпион', coinsRequired: 5000, icon: 'https://example.com/icons/champion.png' },
-            { name: 'Непобедимый', coinsRequired: 10000, icon: 'https://example.com/icons/invincible.png' },
-            { name: 'Бог кликера', coinsRequired: 20000, icon: 'https://example.com/icons/clicker_god.png' }
+            { name: 'Новичок', coinsRequired: 10, icon: 'https://raw.githubusercontent.com/<your-username>/clicker-mini-app-images/main/novice.png' },
+            { name: 'Начинающий', coinsRequired: 50, icon: 'https://raw.githubusercontent.com/<your-username>/clicker-mini-app-images/main/beginner.png' },
+            { name: 'Опытный', coinsRequired: 100, icon: 'https://raw.githubusercontent.com/<your-username>/clicker-mini-app-images/main/experienced.png' },
+            { name: 'Мастер', coinsRequired: 200, icon: 'https://raw.githubusercontent.com/<your-username>/clicker-mini-app-images/main/master.png' },
+            { name: 'Легенда', coinsRequired: 500, icon: 'https://raw.githubusercontent.com/<your-username>/clicker-mini-app-images/main/legend.png' },
+            { name: 'Суперзвезда', coinsRequired: 1000, icon: 'https://raw.githubusercontent.com/<your-username>/clicker-mini-app-images/main/superstar.png' },
+            { name: 'Герой', coinsRequired: 2000, icon: 'https://raw.githubusercontent.com/<your-username>/clicker-mini-app-images/main/hero.png' },
+            { name: 'Чемпион', coinsRequired: 5000, icon: 'https://raw.githubusercontent.com/<your-username>/clicker-mini-app-images/main/champion.png' },
+            { name: 'Непобедимый', coinsRequired: 10000, icon: 'https://raw.githubusercontent.com/<your-username>/clicker-mini-app-images/main/invincible.png' },
+            { name: 'Бог кликера', coinsRequired: 20000, icon: 'https://raw.githubusercontent.com/<your-username>/clicker-mini-app-images/main/clicker_god.png' }
         ];
 
         // Активация полноэкранного режима
@@ -418,6 +419,25 @@
             localStorage.setItem('coins', coins);
             document.getElementById('coins').innerText = 'Coins: ' + coins;
             alert('You have earned 100 coins for watching the ad!');
+        }
+
+        function exchangeTelegramStars() {
+            if (telegramStars >= 10) {
+                coins += telegramStars * 10;
+                telegramStars = 0;
+                localStorage.setItem('coins', coins);
+                localStorage.setItem('telegramStars', telegramStars);
+                document.getElementById('coins').innerText = 'Coins: ' + coins;
+                alert('You have exchanged Telegram Stars for coins!');
+            } else {
+                alert('Not enough Telegram Stars!');
+            }
+        }
+
+        function incrementTelegramStars() {
+            telegramStars += 1;
+            localStorage.setItem('telegramStars', telegramStars);
+            document.getElementById('telegramStars').innerText = 'Telegram Stars: ' + telegramStars;
         }
 
         checkDailyReward();
