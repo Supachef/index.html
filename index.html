@@ -6,7 +6,7 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="manifest" href="/manifest.json">
-    <title>MOBISHARKS</title>
+    <title>Clicker Mini App</title>
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
@@ -36,6 +36,7 @@
             display: flex;
             justify-content: center;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         .nav button {
             padding: 10px 20px;
@@ -45,11 +46,12 @@
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            margin: 0 10px;
-            transition: background-color 0.3s;
+            margin: 5px;
+            transition: background-color 0.3s, transform 0.3s;
         }
         .nav button:hover {
             background-color: #45a049;
+            transform: scale(1.05);
         }
         .nav button.active {
             background-color: #388e3c;
@@ -91,10 +93,11 @@
             border-radius: 5px;
             cursor: pointer;
             margin: 0 10px;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.3s;
         }
         .daily-reward button:hover {
             background-color: #45a049;
+            transform: scale(1.05);
         }
         .promo-code {
             padding: 10px;
@@ -126,10 +129,11 @@
             border-radius: 5px;
             cursor: pointer;
             margin: 0 10px;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.3s;
         }
         .achievements button:hover {
             background-color: #45a049;
+            transform: scale(1.05);
         }
         .achievement {
             display: flex;
@@ -185,7 +189,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>MOBISHARKS</h1>
+        <h1>Clicker Mini App</h1>
         <div class="nav">
             <button id="clickerTab" class="active">Clicker</button>
             <button id="shopTab">Shop</button>
@@ -202,7 +206,7 @@
             <button id="watchAdButton">Watch Ad for 100 Coins</button>
             <div id="videoContainer" style="display: none;">
                 <video id="adVideo" width="320" height="240" controls>
-                    <source src="https://www.ddinstagram.com/reel/DBiEgRYCBYM/?igsh=ZzB1OWN5anV1ZHk=">
+                    <source src="https://example.com/ad.mp4" type="video/mp4">
                     Your browser does not support the video tag.
                 </video>
             </div>
