@@ -148,6 +148,27 @@
         .achievement.achieved {
             color: #4CAF50;
         }
+        .boosts {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .boosts button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .boosts button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
         @media (max-width: 600px) {
             .container {
                 padding: 10px;
@@ -184,6 +205,13 @@
                 width: 40px;
                 height: 40px;
             }
+            .boosts {
+                font-size: 16px;
+            }
+            .boosts button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
@@ -194,6 +222,7 @@
             <button id="clickerTab" class="active">Clicker</button>
             <button id="shopTab">Shop</button>
             <button id="achievementsTab">Achievements</button>
+            <button id="boostsTab">Boosts</button>
         </div>
         <div id="clickerSection" class="section active">
             <img id="star" src="https://raw.githubusercontent.com/<your-username>/clicker-mini-app-images/main/star.png" alt="Star">
@@ -223,6 +252,12 @@
                 <!-- Achievements will be inserted here -->
             </div>
         </div>
+        <div id="boostsSection" class="section">
+            <h2>Boosts</h2>
+            <div id="boostsList">
+                <!-- Boosts will be inserted here -->
+            </div>
+        </div>
     </div>
 
     <script>
@@ -237,6 +272,9 @@
         ];
         const dailyReward = 10;
         const adRewardMultiplier = 2;
+        const boosts = [
+            { name: 'Passive Income', cost: 1000, coinsPerSecond: 0.01 }
+        ];
         const achievementLevels = [
             { name: 'Новичок', coinsRequired: 10, icon: 'https://raw.githubusercontent.com/<your-username>/clicker-mini-app-images/main/novice.png' },
             { name: 'Начинающий', coinsRequired: 50, icon: 'https://raw.githubusercontent.com/<your-username>/clicker-mini-app-images/main/beginner.png' },
@@ -270,18 +308,22 @@
             document.getElementById('clickerTab').classList.add('active');
             document.getElementById('shopTab').classList.remove('active');
             document.getElementById('achievementsTab').classList.remove('active');
+            document.getElementById('boostsTab').classList.remove('active');
             document.getElementById('clickerSection').classList.add('active');
             document.getElementById('shopSection').classList.remove('active');
             document.getElementById('achievementsSection').classList.remove('active');
+            document.getElementById('boostsSection').classList.remove('active');
         });
 
         document.getElementById('shopTab').addEventListener('click', function() {
             document.getElementById('clickerTab').classList.remove('active');
             document.getElementById('shopTab').classList.add('active');
             document.getElementById('achievementsTab').classList.remove('active');
+            document.getElementById('boostsTab').classList.remove('active');
             document.getElementById('clickerSection').classList.remove('active');
             document.getElementById('shopSection').classList.add('active');
             document.getElementById('achievementsSection').classList.remove('active');
+            document.getElementById('boostsSection').classList.remove('active');
             renderPromoCodes();
         });
 
@@ -289,10 +331,24 @@
             document.getElementById('clickerTab').classList.remove('active');
             document.getElementById('shopTab').classList.remove('active');
             document.getElementById('achievementsTab').classList.add('active');
+            document.getElementById('boostsTab').classList.remove('active');
             document.getElementById('clickerSection').classList.remove('active');
             document.getElementById('shopSection').classList.remove('active');
             document.getElementById('achievementsSection').classList.add('active');
+            document.getElementById('boostsSection').classList.remove('active');
             renderAchievements();
+        });
+
+        document.getElementById('boostsTab').addEventListener('click', function() {
+            document.getElementById('clickerTab').classList.remove('active');
+            document.getElementById('shopTab').classList.remove('active');
+            document.getElementById('achievementsTab').classList.remove('active');
+            document.getElementById('boostsTab').classList.add('active');
+            document.getElementById('clickerSection').classList.remove('active');
+            document.getElementById('shopSection').classList.remove('active');
+            document.getElementById('achievementsSection').classList.remove('active');
+            document.getElementById('boostsSection').classList.add('active');
+            renderBoosts();
         });
 
         function renderPromoCodes() {
@@ -333,6 +389,32 @@
                     achievementElement.classList.add('achieved');
                 }
                 achievementsContainer.appendChild(achievementElement);
+            });
+        }
+
+        function renderBoosts() {
+            const boostsContainer = document.getElementById('boostsList');
+            boostsContainer.innerHTML = '';
+            boosts.forEach(boost => {
+                const boostElement = document.createElement('div');
+                boostElement.className = 'boost';
+                boostElement.innerText = `${boost.name} - ${boost.cost} coins (${boost.coinsPerSecond} coins/sec)`;
+                boostElement.addEventListener('click', function() {
+                    if (coins >= boost.cost) {
+                        coins -= boost.cost;
+                        localStorage.setItem('coins', coins);
+                        document.getElementById('coins').innerText = 'Coins: ' + coins;
+                        setInterval(function() {
+                            coins += boost.coinsPerSecond;
+                            localStorage.setItem('coins', coins);
+                            document.getElementById('coins').innerText = 'Coins: ' + coins;
+                        }, 1000);
+                        alert(`You have purchased ${boost.name}!`);
+                    } else {
+                        alert('Not enough coins!');
+                    }
+                });
+                boostsContainer.appendChild(boostElement);
             });
         }
 
