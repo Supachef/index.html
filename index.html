@@ -13,7 +13,7 @@
             font-family: 'Arial', sans-serif;
             text-align: center;
             padding: 20px;
-            background: linear-gradient(135deg, #6B73FF 0%, #000DFF 100%);
+            background: #000; /* Черный фон */
             color: #fff;
             margin: 0;
             height: 100vh;
@@ -62,14 +62,14 @@
         .section.active {
             display: block;
         }
-        #shark {
-            width: 100px;
-            height: 100px;
+        #star {
+            width: 150px;
+            height: 150px;
             cursor: pointer;
             margin-top: 20px;
             transition: transform 0.3s;
         }
-        #shark:active {
+        #star:active {
             transform: scale(0.95);
         }
         #coins {
@@ -152,9 +152,9 @@
             .container {
                 padding: 10px;
             }
-            #shark {
-                width: 80px;
-                height: 80px;
+            #star {
+                width: 100px;
+                height: 100px;
             }
             #coins {
                 font-size: 20px;
@@ -196,7 +196,7 @@
             <button id="achievementsTab">Achievements</button>
         </div>
         <div id="clickerSection" class="section active">
-            <img id="shark" src="https://example.com/shark.png" alt="Shark"> <!-- Замените на URL вашей акулы -->
+            <img id="star" src="https://example.com/star.png" alt="Star"> <!-- Замените на URL вашей звезды -->
             <div id="coins">Coins: 0</div>
             <div id="dailyReward" class="daily-reward">
                 <p>Daily Reward: <span id="rewardAmount">10</span> coins</p>
@@ -257,7 +257,7 @@
         const clickSound = new Audio('https://example.com/click.mp3'); // Замените на URL вашего звукового файла
         const rewardSound = new Audio('https://example.com/reward.mp3'); // Замените на URL вашего звукового файла
 
-        document.getElementById('shark').addEventListener('click', function() {
+        document.getElementById('star').addEventListener('click', function() {
             coins++;
             localStorage.setItem('coins', coins);
             document.getElementById('coins').innerText = 'Coins: ' + coins;
