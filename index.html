@@ -18,7 +18,7 @@
             margin: 0;
             height: 100vh;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
         }
         .container {
@@ -37,6 +37,11 @@
             justify-content: center;
             margin-bottom: 20px;
             flex-wrap: wrap;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px 0;
         }
         .nav button {
             padding: 10px 20px;
@@ -58,6 +63,7 @@
         }
         .section {
             display: none;
+            margin-top: 60px; /* Отступ для учета фиксированного нижнего меню */
         }
         .section.active {
             display: block;
@@ -303,6 +309,7 @@
         let telegramStars = parseInt(localStorage.getItem('telegramStars')) || 0;
         let clickMultiplier = 1;
         let passiveIncomeInterval;
+        let availableClicks = 10; // Начальное количество кликов
 
         const promoCodes = [
             { code: 'PROMO1', cost: 10 },
@@ -337,11 +344,18 @@
         const rewardSound = new Audio('https://example.com/reward.mp3'); // Замените на URL вашего звукового файла
 
         document.getElementById('star').addEventListener('click', function() {
-            coins += clickMultiplier;
-            localStorage.setItem('coins', coins);
-            document.getElementById('coins').innerText = 'Coins: ' + coins;
-            clickSound.play();
-            checkAchievements();
+            if (availableClicks > 0) {
+                coins += clickMultiplier;
+                availableClicks--;
+                localStorage.setItem('coins', coins);
+                localStorage.setItem('availableClicks', availableClicks);
+                document.getElementById('coins').innerText = 'Coins: ' + coins;
+                clickSound.play();
+                checkAchievements();
+            } else {
+                alert('No more clicks available. Watch an ad to get more clicks.');
+                showVideo();
+            }
         });
 
         document.getElementById('clickerTab').addEventListener('click', function() {
@@ -582,7 +596,9 @@
 
         function rewardUser() {
             coins += 100;
+            availableClicks = 10; // Восстановить количество кликов
             localStorage.setItem('coins', coins);
+            localStorage.setItem('availableClicks', availableClicks);
             document.getElementById('coins').innerText = 'Coins: ' + coins;
             alert('You have earned 100 coins for watching the ad!');
         }
