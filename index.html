@@ -2,235 +2,623 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mini App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <link rel="manifest" href="/manifest.json">
+    <title>Clicker Mini App</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 100vh;
-            background-color: #f0f0f5;
-        }
-
-        header {
-            background-color: #4CAF50;
-            color: white;
+            font-family: 'Arial', sans-serif;
             text-align: center;
-            padding: 10px;
-        }
-
-        main {
-            flex: 1;
+            padding: 20px;
+            background: #000; /* Черный фон */
+            color: #fff;
+            margin: 0;
+            height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
         }
-
-        footer {
-            background-color: #ddd;
+        .container {
+            max-width: 600px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .nav {
             display: flex;
-            justify-content: space-around;
+            justify-content: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
             padding: 10px 0;
         }
-
-        footer button {
-            border: none;
-            background-color: transparent;
-            font-size: 16px;
-            cursor: pointer;
-        }
-
-        .clicker {
-            text-align: center;
-        }
-
-        .clicker img {
-            width: 100px;
-            cursor: pointer;
-            transition: transform 0.2s;
-            animation: pulse 1.5s infinite;
-        }
-
-        .clicker img:hover {
-            transform: scale(1.2);
-        }
-
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-            50% {
-                transform: scale(1.1);
-            }
-            100% {
-                transform: scale(1);
-            }
-        }
-
-        .shop, .achievements, .upgrades, .exchange {
-            display: none; /* Initially hidden */
-            text-align: center;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        .coins {
-            font-size: 20px;
-            margin: 20px 0;
-        }
-
-        .button-group {
-            margin-top: 20px;
-        }
-
-        .button-group button {
-            margin: 5px;
+        .nav button {
             padding: 10px 20px;
+            font-size: 16px;
             background-color: #4CAF50;
             color: white;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            margin: 5px;
+            transition: background-color 0.3s, transform 0.3s;
         }
-
-        .button-group button:hover {
+        .nav button:hover {
             background-color: #45a049;
+            transform: scale(1.05);
+        }
+        .nav button.active {
+            background-color: #388e3c;
+        }
+        .section {
+            display: none;
+            margin-top: 60px; /* Отступ для учета фиксированного нижнего меню */
+        }
+        .section.active {
+            display: block;
+        }
+        #star {
+            width: 150px;
+            height: 150px;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: transform 0.3s;
+        }
+        #star:active {
+            transform: scale(0.95);
+        }
+        #coins {
+            margin-top: 20px;
+            font-size: 24px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .daily-reward {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .daily-reward button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .daily-reward button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        .promo-code {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .promo-code:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        .achievements {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .achievements button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .achievements button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        .achievement {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .achievement img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+        }
+        .achievement.achieved {
+            color: #4CAF50;
+        }
+        .boosts {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .boosts button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .boosts button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        .exchange {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        .exchange button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 0 10px;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .exchange button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 10px;
+            }
+            #star {
+                width: 100px;
+                height: 100px;
+            }
+            #coins {
+                font-size: 20px;
+            }
+            .nav button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            .daily-reward {
+                font-size: 16px;
+            }
+            .daily-reward button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            .promo-code {
+                font-size: 14px;
+            }
+            .achievements {
+                font-size: 16px;
+            }
+            .achievements button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            .achievement img {
+                width: 40px;
+                height: 40px;
+            }
+            .boosts {
+                font-size: 16px;
+            }
+            .boosts button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
+            .exchange {
+                font-size: 16px;
+            }
+            .exchange button {
+                padding: 8px 16px;
+                font-size: 14px;
+            }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>My Mini App</h1>
-    </header>
-
-    <main>
-        <div id="clicker" class="clicker">
-            <p class="coins">Coins: <span id="coin-count">0</span></p>
-            <img src="https://drive.google.com/uc?export=view&id=1kz4k6bmoQaAFVuSQVptDh3_p0z6DjAsJ" alt="Click Me" id="star" />
-            <p>Click the star to earn coins!</p>
-            <div class="button-group">
-                <button onclick="watchAd('double')">Watch Ad for Double Coins</button>
+    <div class="container">
+        <h1>Clicker Mini App</h1>
+        <div class="nav">
+            <button id="clickerTab" class="active">Clicker</button>
+            <button id="shopTab">Shop</button>
+            <button id="achievementsTab">Achievements</button>
+            <button id="boostsTab">Boosts</button>
+            <button id="exchangeTab">Exchange</button>
+        </div>
+        <div id="clickerSection" class="section active">
+            <img id="star" src="https://drive.google.com/uc?export=view&id=1kz4k6bmoQaAFVuSQVptDh3_p0z6DjAsJ" alt="Star">
+            <div id="coins">Coins: 0</div>
+            <div id="dailyReward" class="daily-reward">
+                <p>Daily Reward: <span id="rewardAmount">10</span> coins</p>
+                <button id="claimReward">Claim</button>
+                <button id="watchAd">Watch Ad (x2)</button>
+            </div>
+            <button id="watchAdButton">Watch Ad for 100 Coins</button>
+            <div id="videoContainer" style="display: none;">
+                <video id="adVideo" width="320" height="240" controls>
+                    <source src="https://drive.google.com/uc?export=download&id=1iyGAhHEVjWx3Vt98xUwsADIS8AxQJntg" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
             </div>
         </div>
-
-        <div id="shop" class="shop hidden">
+        <div id="shopSection" class="section">
             <h2>Shop</h2>
-            <p>Buy upgrades and promo codes here!</p>
-        </div>
-
-        <div id="achievements" class="achievements hidden">
-            <h2>Achievements</h2>
-            <p>Check your achievements here!</p>
-        </div>
-
-        <div id="upgrades" class="upgrades hidden">
-            <h2>Upgrades</h2>
-            <p>Increase coins per click or earn passive income!</p>
-            <div class="button-group">
-                <button onclick="buyUpgrade('clickBoost')">Click Boost (10 coins)</button>
-                <button onclick="buyUpgrade('passiveIncome')">Passive Income (1000 coins)</button>
+            <div id="promoCodes">
+                <!-- Promo codes will be inserted here -->
             </div>
         </div>
-
-        <div id="exchange" class="exchange hidden">
-            <h2>Exchange</h2>
-            <p>Trade coins for Telegram Stars!</p>
-            <button onclick="exchangeCoins()">Exchange 100 Coins for 1 Telegram Star</button>
+        <div id="achievementsSection" class="section">
+            <h2>Achievements</h2>
+            <div id="achievementsList">
+                <!-- Achievements will be inserted here -->
+            </div>
         </div>
-    </main>
-
-    <footer>
-        <button onclick="switchTab('clicker')">Clicker</button>
-        <button onclick="switchTab('shop')">Shop</button>
-        <button onclick="switchTab('achievements')">Achievements</button>
-        <button onclick="switchTab('upgrades')">Upgrades</button>
-        <button onclick="switchTab('exchange')">Exchange</button>
-    </footer>
+        <div id="boostsSection" class="section">
+            <h2>Boosts</h2>
+            <div id="boostsList">
+                <!-- Boosts will be inserted here -->
+            </div>
+        </div>
+        <div id="exchangeSection" class="section">
+            <h2>Exchange</h2>
+            <div id="exchangeList">
+                <button id="exchangeButton">Exchange Coins for Telegram Stars</button>
+                <div id="telegramStars">Telegram Stars: 0</div>
+            </div>
+        </div>
+    </div>
 
     <script>
-        let coins = 0;
+        let coins = parseInt(localStorage.getItem('coins')) || 0;
+        let lastClaimDate = localStorage.getItem('lastClaimDate');
+        let achievements = JSON.parse(localStorage.getItem('achievements')) || [];
+        let telegramStars = parseInt(localStorage.getItem('telegramStars')) || 0;
         let clickMultiplier = 1;
-        let availableClicks = 10;
         let passiveIncomeInterval;
+        let availableClicks = 10; // Начальное количество кликов
 
-        const coinCount = document.getElementById('coin-count');
-        const star = document.getElementById('star');
+        const promoCodes = [
+            { code: 'PROMO1', cost: 10 },
+            { code: 'PROMO2', cost: 20 },
+            { code: 'PROMO3', cost: 30 }
+        ];
+        const dailyReward = 10;
+        const adRewardMultiplier = 2;
+        const boosts = [
+            { name: 'Click Boost', cost: 10, multiplier: 2 },
+            { name: 'Passive Income', cost: 1000, coinsPerSecond: 0.01 }
+        ];
+        const achievementLevels = [
+            { name: 'Новичок', coinsRequired: 10, icon: 'https://drive.google.com/uc?export=view&id=1kz4k6bmoQaAFVuSQVptDh3_p0z6DjAsJ' },
+            { name: 'Начинающий', coinsRequired: 50, icon: 'https://drive.google.com/uc?export=view&id=1kz4k6bmoQaAFVuSQVptDh3_p0z6DjAsJ' },
+            { name: 'Опытный', coinsRequired: 100, icon: 'https://drive.google.com/uc?export=view&id=1kz4k6bmoQaAFVuSQVptDh3_p0z6DjAsJ' },
+            { name: 'Мастер', coinsRequired: 200, icon: 'https://drive.google.com/uc?export=view&id=1kz4k6bmoQaAFVuSQVptDh3_p0z6DjAsJ' },
+            { name: 'Легенда', coinsRequired: 500, icon: 'https://drive.google.com/uc?export=view&id=1kz4k6bmoQaAFVuSQVptDh3_p0z6DjAsJ' },
+            { name: 'Суперзвезда', coinsRequired: 1000, icon: 'https://drive.google.com/uc?export=view&id=1kz4k6bmoQaAFVuSQVptDh3_p0z6DjAsJ' },
+            { name: 'Герой', coinsRequired: 2000, icon: 'https://drive.google.com/uc?export=view&id=1kz4k6bmoQaAFVuSQVptDh3_p0z6DjAsJ' },
+            { name: 'Чемпион', coinsRequired: 5000, icon: 'https://drive.google.com/uc?export=view&id=1kz4k6bmoQaAFVuSQVptDh3_p0z6DjAsJ' },
+            { name: 'Непобедимый', coinsRequired: 10000, icon: 'https://drive.google.com/uc?export=view&id=1kz4k6bmoQaAFVuSQVptDh3_p0z6DjAsJ' },
+            { name: 'Бог кликера', coinsRequired: 20000, icon: 'https://drive.google.com/uc?export=view&id=1kz4k6bmoQaAFVuSQVptDh3_p0z6DjAsJ' }
+        ];
 
-        star.addEventListener('click', () => {
+        // Активация полноэкранного режима
+        Telegram.WebApp.expand();
+        Telegram.WebApp.enableClosingConfirmation();
+
+        // Звуковые эффекты
+        const clickSound = new Audio('https://example.com/click.mp3'); // Замените на URL вашего звукового файла
+        const rewardSound = new Audio('https://example.com/reward.mp3'); // Замените на URL вашего звукового файла
+
+        document.getElementById('star').addEventListener('click', function() {
             if (availableClicks > 0) {
                 coins += clickMultiplier;
                 availableClicks--;
-                updateCoins();
+                localStorage.setItem('coins', coins);
+                localStorage.setItem('availableClicks', availableClicks);
+                document.getElementById('coins').innerText = 'Coins: ' + coins;
+                clickSound.play();
+                checkAchievements();
             } else {
                 alert('No more clicks available. Watch an ad to get more clicks.');
-                watchAd('clicks');
+                showVideo();
             }
         });
 
-        function updateCoins() {
-            coinCount.textContent = coins;
-            localStorage.setItem('coins', coins);
-        }
+        document.getElementById('clickerTab').addEventListener('click', function() {
+            document.getElementById('clickerTab').classList.add('active');
+            document.getElementById('shopTab').classList.remove('active');
+            document.getElementById('achievementsTab').classList.remove('active');
+            document.getElementById('boostsTab').classList.remove('active');
+            document.getElementById('exchangeTab').classList.remove('active');
+            document.getElementById('clickerSection').classList.add('active');
+            document.getElementById('shopSection').classList.remove('active');
+            document.getElementById('achievementsSection').classList.remove('active');
+            document.getElementById('boostsSection').classList.remove('active');
+            document.getElementById('exchangeSection').classList.remove('active');
+        });
 
-        function switchTab(tab) {
-            document.querySelectorAll('main > div').forEach(div => {
-                div.classList.add('hidden');
+        document.getElementById('shopTab').addEventListener('click', function() {
+            document.getElementById('clickerTab').classList.remove('active');
+            document.getElementById('shopTab').classList.add('active');
+            document.getElementById('achievementsTab').classList.remove('active');
+            document.getElementById('boostsTab').classList.remove('active');
+            document.getElementById('exchangeTab').classList.remove('active');
+            document.getElementById('clickerSection').classList.remove('active');
+            document.getElementById('shopSection').classList.add('active');
+            document.getElementById('achievementsSection').classList.remove('active');
+            document.getElementById('boostsSection').classList.remove('active');
+            document.getElementById('exchangeSection').classList.remove('active');
+            renderPromoCodes();
+        });
+
+        document.getElementById('achievementsTab').addEventListener('click', function() {
+            document.getElementById('clickerTab').classList.remove('active');
+            document.getElementById('shopTab').classList.remove('active');
+            document.getElementById('achievementsTab').classList.add('active');
+            document.getElementById('boostsTab').classList.remove('active');
+            document.getElementById('exchangeTab').classList.remove('active');
+            document.getElementById('clickerSection').classList.remove('active');
+            document.getElementById('shopSection').classList.remove('active');
+            document.getElementById('achievementsSection').classList.add('active');
+            document.getElementById('boostsSection').classList.remove('active');
+            document.getElementById('exchangeSection').classList.remove('active');
+            renderAchievements();
+        });
+
+        document.getElementById('boostsTab').addEventListener('click', function() {
+            document.getElementById('clickerTab').classList.remove('active');
+            document.getElementById('shopTab').classList.remove('active');
+            document.getElementById('achievementsTab').classList.remove('active');
+            document.getElementById('boostsTab').classList.add('active');
+            document.getElementById('exchangeTab').classList.remove('active');
+            document.getElementById('clickerSection').classList.remove('active');
+            document.getElementById('shopSection').classList.remove('active');
+            document.getElementById('achievementsSection').classList.remove('active');
+            document.getElementById('boostsSection').classList.add('active');
+            document.getElementById('exchangeSection').classList.remove('active');
+            renderBoosts();
+        });
+
+        document.getElementById('exchangeTab').addEventListener('click', function() {
+            document.getElementById('clickerTab').classList.remove('active');
+            document.getElementById('shopTab').classList.remove('active');
+            document.getElementById('achievementsTab').classList.remove('active');
+            document.getElementById('boostsTab').classList.remove('active');
+            document.getElementById('exchangeTab').classList.add('active');
+            document.getElementById('clickerSection').classList.remove('active');
+            document.getElementById('shopSection').classList.remove('active');
+            document.getElementById('achievementsSection').classList.remove('active');
+            document.getElementById('boostsSection').classList.remove('active');
+            document.getElementById('exchangeSection').classList.add('active');
+            renderExchange();
+        });
+
+        function renderPromoCodes() {
+            const promoCodesContainer = document.getElementById('promoCodes');
+            promoCodesContainer.innerHTML = '';
+            promoCodes.forEach(promo => {
+                const promoElement = document.createElement('div');
+                promoElement.className = 'promo-code';
+                promoElement.innerText = `${promo.code} - ${promo.cost} coins`;
+                promoElement.addEventListener('click', function() {
+                    if (coins >= promo.cost) {
+                        coins -= promo.cost;
+                        localStorage.setItem('coins', coins);
+                        document.getElementById('coins').innerText = 'Coins: ' + coins;
+                        alert(`You have redeemed ${promo.code}!`);
+                    } else {
+                        alert('Not enough coins!');
+                    }
+                });
+                promoCodesContainer.appendChild(promoElement);
             });
-            document.getElementById(tab).classList.remove('hidden');
         }
 
-        function watchAd(type) {
-            if (type === 'double') {
-                coins *= 2;
-                updateCoins();
-                alert('Coins doubled!');
-            } else if (type === 'clicks') {
-                availableClicks = 10;
-                alert('You have watched an ad and got more clicks!');
+        function renderAchievements() {
+            const achievementsContainer = document.getElementById('achievementsList');
+            achievementsContainer.innerHTML = '';
+            achievementLevels.forEach(level => {
+                const achievementElement = document.createElement('div');
+                achievementElement.className = 'achievement';
+                const img = document.createElement('img');
+                img.src = level.icon;
+                img.alt = level.name;
+                achievementElement.appendChild(img);
+                const text = document.createElement('span');
+                text.innerText = `${level.name} - ${level.coinsRequired} coins`;
+                achievementElement.appendChild(text);
+                if (achievements.includes(level.name)) {
+                    achievementElement.classList.add('achieved');
+                }
+                achievementsContainer.appendChild(achievementElement);
+            });
+        }
+
+        function renderBoosts() {
+            const boostsContainer = document.getElementById('boostsList');
+            boostsContainer.innerHTML = '';
+            boosts.forEach(boost => {
+                const boostElement = document.createElement('div');
+                boostElement.className = 'boost';
+                boostElement.innerText = `${boost.name} - ${boost.cost} coins (${boost.multiplier}x click multiplier)`;
+                if (boost.name === 'Passive Income') {
+                    boostElement.innerText = `${boost.name} - ${boost.cost} coins (${boost.coinsPerSecond} coins/sec)`;
+                }
+                boostElement.addEventListener('click', function() {
+                    if (coins >= boost.cost) {
+                        coins -= boost.cost;
+                        localStorage.setItem('coins', coins);
+                        document.getElementById('coins').innerText = 'Coins: ' + coins;
+                        if (boost.name === 'Click Boost') {
+                            clickMultiplier = boost.multiplier;
+                            alert(`You have purchased ${boost.name}!`);
+                        } else if (boost.name === 'Passive Income') {
+                            passiveIncomeInterval = setInterval(function() {
+                                coins += boost.coinsPerSecond;
+                                localStorage.setItem('coins', coins);
+                                document.getElementById('coins').innerText = 'Coins: ' + coins;
+                            }, 1000);
+                            alert(`You have purchased ${boost.name}!`);
+                        }
+                    } else {
+                        alert('Not enough coins!');
+                    }
+                });
+                boostsContainer.appendChild(boostElement);
+            });
+        }
+
+        function renderExchange() {
+            const exchangeContainer = document.getElementById('exchangeList');
+            exchangeContainer.innerHTML = '';
+            const exchangeButton = document.createElement('button');
+            exchangeButton.id = 'exchangeButton';
+            exchangeButton.innerText = 'Exchange Coins for Telegram Stars';
+            exchangeButton.addEventListener('click', exchangeTelegramStars);
+            exchangeContainer.appendChild(exchangeButton);
+            const telegramStarsDiv = document.createElement('div');
+            telegramStarsDiv.id = 'telegramStars';
+            telegramStarsDiv.innerText = 'Telegram Stars: ' + telegramStars;
+            exchangeContainer.appendChild(telegramStarsDiv);
+        }
+
+        function checkAchievements() {
+            achievementLevels.forEach(level => {
+                if (coins >= level.coinsRequired && !achievements.includes(level.name)) {
+                    achievements.push(level.name);
+                    localStorage.setItem('achievements', JSON.stringify(achievements));
+                    alert(`Achievement unlocked: ${level.name}!`);
+                    renderAchievements();
+                }
+            });
+        }
+
+        Telegram.WebApp.onEvent('mainButtonClicked', function() {
+            Telegram.WebApp.sendData(JSON.stringify({ coins: coins }));
+        });
+
+        document.getElementById('coins').innerText = 'Coins: ' + coins;
+
+        function checkDailyReward() {
+            const currentDate = new Date().toLocaleDateString();
+            if (lastClaimDate !== currentDate) {
+                document.getElementById('dailyReward').style.display = 'block';
+            } else {
+                document.getElementById('dailyReward').style.display = 'none';
             }
         }
 
-        function buyUpgrade(upgrade) {
-            if (upgrade === 'clickBoost' && coins >= 10) {
+        document.getElementById('claimReward').addEventListener('click', function() {
+            const currentDate = new Date().toLocaleDateString();
+            if (lastClaimDate !== currentDate) {
+                coins += dailyReward;
+                localStorage.setItem('coins', coins);
+                localStorage.setItem('lastClaimDate', currentDate);
+                document.getElementById('coins').innerText = 'Coins: ' + coins;
+                document.getElementById('dailyReward').style.display = 'none';
+                rewardSound.play();
+                checkAchievements();
+            }
+        });
+
+        document.getElementById('watchAd').addEventListener('click', function() {
+            const currentDate = new Date().toLocaleDateString();
+            if (lastClaimDate !== currentDate) {
+                // Здесь вы можете добавить код для показа рекламы
+                // После просмотра рекламы вызовите функцию claimAdReward
+                claimAdReward();
+            }
+        });
+
+        function claimAdReward() {
+            const currentDate = new Date().toLocaleDateString();
+            if (lastClaimDate !== currentDate) {
+                coins += dailyReward * adRewardMultiplier;
+                localStorage.setItem('coins', coins);
+                localStorage.setItem('lastClaimDate', currentDate);
+                document.getElementById('coins').innerText = 'Coins: ' + coins;
+                document.getElementById('dailyReward').style.display = 'none';
+                rewardSound.play();
+                checkAchievements();
+            }
+        }
+
+        document.getElementById('watchAdButton').addEventListener('click', function() {
+            // Показать видео
+            showVideo();
+        });
+
+        function showVideo() {
+            const videoContainer = document.getElementById('videoContainer');
+            const adVideo = document.getElementById('adVideo');
+            videoContainer.style.display = 'block';
+            adVideo.play();
+
+            adVideo.addEventListener('ended', function() {
+                videoContainer.style.display = 'none';
+                rewardUser();
+            });
+        }
+
+        function rewardUser() {
+            coins += 100;
+            availableClicks = 10; // Восстановить количество кликов
+            localStorage.setItem('coins', coins);
+            localStorage.setItem('availableClicks', availableClicks);
+            document.getElementById('coins').innerText = 'Coins: ' + coins;
+            alert('You have earned 100 coins for watching the ad!');
+        }
+
+        function exchangeTelegramStars() {
+            if (coins >= 10) {
+                telegramStars += 1;
                 coins -= 10;
-                clickMultiplier = 2;
-                updateCoins();
-                alert('You have purchased Click Boost!');
-            } else if (upgrade === 'passiveIncome' && coins >= 1000) {
-                coins -= 1000;
-                passiveIncomeInterval = setInterval(() => {
-                    coins++;
-                    updateCoins();
-                }, 1000);
-                alert('You have purchased Passive Income!');
+                localStorage.setItem('coins', coins);
+                localStorage.setItem('telegramStars', telegramStars);
+                document.getElementById('coins').innerText = 'Coins: ' + coins;
+                document.getElementById('telegramStars').innerText = 'Telegram Stars: ' + telegramStars;
+                alert('You have exchanged coins for Telegram Stars!');
             } else {
-                alert('Not enough coins to buy this upgrade.');
+                alert('Not enough coins!');
             }
         }
 
-        function exchangeCoins() {
-            if (coins >= 100) {
-                coins -= 100;
-                updateCoins();
-                alert('You have exchanged 100 coins for 1 Telegram Star!');
-                // Here you can add logic to send data to your server, e.g., GitHub Pages.
-            } else {
-                alert('Not enough coins to exchange.');
-            }
-        }
-
-        // Load saved coins
-        if (localStorage.getItem('coins')) {
-            coins = parseInt(localStorage.getItem('coins'));
-            updateCoins();
-        }
+        checkDailyReward();
+        renderAchievements();
     </script>
 </body>
 </html>
