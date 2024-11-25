@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Runner Game</title>
+    <title>Subway Surfers</title>
     <style>
         body {
             margin: 0;
@@ -14,7 +14,10 @@
 </head>
 <body>
     <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
+        Telegram.WebApp.ready();
+
         const config = {
             type: Phaser.AUTO,
             width: 800,
@@ -42,6 +45,7 @@
         let score = 0;
         let scoreText;
         let gameOver = false;
+        let speed = 200;
 
         function preload() {
             this.load.image('sky', 'https://labs.phaser.io/assets/skies/space3.png');
@@ -80,7 +84,7 @@
             this.physics.add.collider(bombs, this.platforms);
             this.physics.add.collider(player, bombs, hitBomb, null, this);
 
-            scoreText = this.add.text(16, 16, 'score: 0', { fontSize: '32px', fill: '#000' });
+            scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
 
             cursors = this.input.keyboard.createCursorKeys();
         }
@@ -90,20 +94,19 @@
                 return;
             }
 
-            if (cursors.left.isDown) {
-                player.setVelocityX(-160);
-            } else if (cursors.right.isDown) {
-                player.setVelocityX(160);
-            } else {
-                player.setVelocityX(0);
-            }
+            player.setVelocityX(speed);
 
-            player.setVelocityY(0);
-            player.setVelocityX(160);
+            if (cursors.left.isDown) {
+                player.setVelocityX(player.body.velocity.x - 160);
+            } else if (cursors.right.isDown) {
+                player.setVelocityX(player.body.velocity.x + 160);
+            }
 
             if (cursors.up.isDown && player.body.touching.down) {
                 player.setVelocityY(-330);
             }
+
+            speed += 0.1; // Увеличиваем скорость со временем
         }
 
         function collectStar(player, star) {
@@ -117,6 +120,16 @@
             player.setTint(0xff0000);
             player.anims.play('turn');
             gameOver = true;
+            onGameOver(score);
+        }
+
+        function shareScore(score) {
+            Telegram.WebApp.sendData(JSON.stringify({ score: score }));
+        }
+
+        function onGameOver(score) {
+            shareScore(score);
+            Telegram.WebApp.close();
         }
     </script>
 </body>
