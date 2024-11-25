@@ -34,28 +34,36 @@
             font-size: 1.2em;
             margin: 10px 0;
         }
-        button {
+        .star-button {
+            font-size: 2em;
+            margin: 20px 0;
+            cursor: pointer;
+            color: #ffd700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            transition: transform 0.3s;
+        }
+        .star-button:hover {
+            transform: scale(1.2);
+        }
+        .star-button:active {
+            transform: scale(0.9);
+        }
+        #exchange-button {
             padding: 15px 30px;
             font-size: 1.2em;
             margin: 10px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            transition: background 0.3s, transform 0.3s;
-        }
-        #coin-button {
-            background: #ff9a9e;
-            color: #fff;
-        }
-        #exchange-button {
             background: #fad0c4;
             color: #333;
+            transition: background 0.3s, transform 0.3s;
         }
-        button:hover {
+        #exchange-button:hover {
             background: #ff6b6b;
             transform: scale(1.05);
         }
-        button:active {
+        #exchange-button:active {
             background: #ff4b4b;
             transform: scale(0.95);
         }
@@ -66,7 +74,7 @@
         <h1>Coin Clicker</h1>
         <p>Coins: <span id="coins">0</span></p>
         <p>Level: <span id="level">1</span></p>
-        <button id="coin-button">Earn Coins</button>
+        <div class="star-button" id="coin-button">⭐</div>
         <button id="exchange-button">Exchange Coins</button>
     </div>
 
