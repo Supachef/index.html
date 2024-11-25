@@ -260,7 +260,7 @@
             <button id="exchangeTab">Exchange</button>
         </div>
         <div id="clickerSection" class="section active">
-            <img id="star" src="https://drive.google.com/uc?export=view&id=YOUR_IMAGE_ID" alt="Star">
+            <img id="star" src="https://e7.pngegg.com/pngimages/44/431/png-clipart-cute-stars-star-yellow-star-thumbnail.png" alt="Star">
             <div id="coins">Coins: 0</div>
             <div id="dailyReward" class="daily-reward">
                 <p>Daily Reward: <span id="rewardAmount">10</span> coins</p>
@@ -269,7 +269,10 @@
             </div>
             <button id="watchAdButton">Watch Ad for 100 Coins</button>
             <div id="videoContainer" style="display: none;">
-                <iframe width="320" height="240" src="https://www.youtube.com/embed/YOUR_VIDEO_ID" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                <video id="adVideo" width="320" height="240" controls>
+                    <source src="https://www.youtube.com/embed/YOUR_VIDEO_ID" type="video/mp4">
+                    Your browser does not support the video tag.
+                </video>
             </div>
         </div>
         <div id="shopSection" class="section">
@@ -320,16 +323,16 @@
             { name: 'Passive Income', cost: 1000, coinsPerSecond: 0.01 }
         ];
         const achievementLevels = [
-            { name: 'Новичок', coinsRequired: 10, icon: 'https://drive.google.com/uc?export=view&id=YOUR_IMAGE_ID' },
-            { name: 'Начинающий', coinsRequired: 50, icon: 'https://drive.google.com/uc?export=view&id=YOUR_IMAGE_ID' },
-            { name: 'Опытный', coinsRequired: 100, icon: 'https://drive.google.com/uc?export=view&id=YOUR_IMAGE_ID' },
-            { name: 'Мастер', coinsRequired: 200, icon: 'https://drive.google.com/uc?export=view&id=YOUR_IMAGE_ID' },
-            { name: 'Легенда', coinsRequired: 500, icon: 'https://drive.google.com/uc?export=view&id=YOUR_IMAGE_ID' },
-            { name: 'Суперзвезда', coinsRequired: 1000, icon: 'https://drive.google.com/uc?export=view&id=YOUR_IMAGE_ID' },
-            { name: 'Герой', coinsRequired: 2000, icon: 'https://drive.google.com/uc?export=view&id=YOUR_IMAGE_ID' },
-            { name: 'Чемпион', coinsRequired: 5000, icon: 'https://drive.google.com/uc?export=view&id=YOUR_IMAGE_ID' },
-            { name: 'Непобедимый', coinsRequired: 10000, icon: 'https://drive.google.com/uc?export=view&id=YOUR_IMAGE_ID' },
-            { name: 'Бог кликера', coinsRequired: 20000, icon: 'https://drive.google.com/uc?export=view&id=YOUR_IMAGE_ID' }
+            { name: 'Новичок', coinsRequired: 10, icon: 'https://e7.pngegg.com/pngimages/44/431/png-clipart-cute-stars-star-yellow-star-thumbnail.png' },
+            { name: 'Начинающий', coinsRequired: 50, icon: 'https://e7.pngegg.com/pngimages/44/431/png-clipart-cute-stars-star-yellow-star-thumbnail.png' },
+            { name: 'Опытный', coinsRequired: 100, icon: 'https://e7.pngegg.com/pngimages/44/431/png-clipart-cute-stars-star-yellow-star-thumbnail.png' },
+            { name: 'Мастер', coinsRequired: 200, icon: 'https://e7.pngegg.com/pngimages/44/431/png-clipart-cute-stars-star-yellow-star-thumbnail.png' },
+            { name: 'Легенда', coinsRequired: 500, icon: 'https://e7.pngegg.com/pngimages/44/431/png-clipart-cute-stars-star-yellow-star-thumbnail.png' },
+            { name: 'Суперзвезда', coinsRequired: 1000, icon: 'https://e7.pngegg.com/pngimages/44/431/png-clipart-cute-stars-star-yellow-star-thumbnail.png' },
+            { name: 'Герой', coinsRequired: 2000, icon: 'https://e7.pngegg.com/pngimages/44/431/png-clipart-cute-stars-star-yellow-star-thumbnail.png' },
+            { name: 'Чемпион', coinsRequired: 5000, icon: 'https://e7.pngegg.com/pngimages/44/431/png-clipart-cute-stars-star-yellow-star-thumbnail.png' },
+            { name: 'Непобедимый', coinsRequired: 10000, icon: 'https://e7.pngegg.com/pngimages/44/431/png-clipart-cute-stars-star-yellow-star-thumbnail.png' },
+            { name: 'Бог кликера', coinsRequired: 20000, icon: 'https://e7.pngegg.com/pngimages/44/431/png-clipart-cute-stars-star-yellow-star-thumbnail.png' }
         ];
 
         // Активация полноэкранного режима
@@ -581,7 +584,14 @@
 
         function showVideo() {
             const videoContainer = document.getElementById('videoContainer');
+            const adVideo = document.getElementById('adVideo');
             videoContainer.style.display = 'block';
+            adVideo.play();
+
+            adVideo.addEventListener('ended', function() {
+                videoContainer.style.display = 'none';
+                rewardUser();
+            });
         }
 
         function rewardUser() {
