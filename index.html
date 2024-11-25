@@ -3,134 +3,57 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Subway Surfers</title>
+    <title>Coin Clicker</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
-            overflow: hidden;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+        #coin-button {
+            padding: 10px 20px;
+            font-size: 20px;
+            cursor: pointer;
+        }
+        #exchange-button {
+            padding: 10px 20px;
+            font-size: 20px;
+            cursor: pointer;
         }
     </style>
 </head>
 <body>
-    <script src="https://cdn.jsdelivr.net/npm/phaser@3.55.2/dist/phaser.min.js"></script>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <h1>Coin Clicker</h1>
+    <p>Coins: <span id="coins">0</span></p>
+    <p>Level: <span id="level">1</span></p>
+    <button id="coin-button">Earn Coins</button>
+    <button id="exchange-button">Exchange Coins</button>
+
     <script>
-        Telegram.WebApp.ready();
+        const telegram = window.Telegram.WebApp;
+        let coins = 0;
+        let level = 1;
 
-        const config = {
-            type: Phaser.AUTO,
-            width: 800,
-            height: 600,
-            physics: {
-                default: 'arcade',
-                arcade: {
-                    gravity: { y: 0 },
-                    debug: false
-                }
-            },
-            scene: {
-                preload: preload,
-                create: create,
-                update: update
+        document.getElementById('coin-button').addEventListener('click', () => {
+            coins += 1;
+            document.getElementById('coins').innerText = coins;
+            telegram.HapticFeedback.impactOccurred('light');
+        });
+
+        document.getElementById('exchange-button').addEventListener('click', () => {
+            if (coins >= 100) {
+                coins -= 100;
+                level += 1;
+                document.getElementById('coins').innerText = coins;
+                document.getElementById('level').innerText = level;
+                telegram.HapticFeedback.impactOccurred('medium');
+                telegram.showAlert(`Congratulations! You've reached level ${level}`);
+            } else {
+                telegram.showAlert('Not enough coins to exchange.');
             }
-        };
+        });
 
-        const game = new Phaser.Game(config);
-
-        let player;
-        let cursors;
-        let stars;
-        let bombs;
-        let score = 0;
-        let scoreText;
-        let gameOver = false;
-        let speed = 200;
-
-        function preload() {
-            this.load.image('sky', 'https://labs.phaser.io/assets/skies/space3.png');
-            this.load.image('ground', 'https://labs.phaser.io/assets/sprites/platform.png');
-            this.load.image('star', 'https://labs.phaser.io/assets/sprites/star.png');
-            this.load.image('bomb', 'https://labs.phaser.io/assets/sprites/bomb.png');
-            this.load.spritesheet('dude', 'https://labs.phaser.io/assets/animations/dude.png', { frameWidth: 32, frameHeight: 48 });
-        }
-
-        function create() {
-            this.add.image(400, 300, 'sky');
-
-            this.platforms = this.physics.add.staticGroup();
-            this.platforms.create(400, 568, 'ground').setScale(2).refreshBody();
-
-            player = this.physics.add.sprite(100, 450, 'dude');
-            player.setBounce(0.2);
-            player.setCollideWorldBounds(true);
-
-            this.physics.add.collider(player, this.platforms);
-
-            stars = this.physics.add.group({
-                key: 'star',
-                repeat: 11,
-                setXY: { x: 12, y: 0, stepX: 70 }
-            });
-
-            stars.children.iterate(function (child) {
-                child.setBounceY(Phaser.Math.FloatBetween(0.4, 0.8));
-            });
-
-            this.physics.add.collider(stars, this.platforms);
-            this.physics.add.overlap(player, stars, collectStar, null, this);
-
-            bombs = this.physics.add.group();
-            this.physics.add.collider(bombs, this.platforms);
-            this.physics.add.collider(player, bombs, hitBomb, null, this);
-
-            scoreText = this.add.text(16, 16, 'Score: 0', { fontSize: '32px', fill: '#000' });
-
-            cursors = this.input.keyboard.createCursorKeys();
-        }
-
-        function update() {
-            if (gameOver) {
-                return;
-            }
-
-            player.setVelocityX(speed);
-
-            if (cursors.left.isDown) {
-                player.setVelocityX(player.body.velocity.x - 160);
-            } else if (cursors.right.isDown) {
-                player.setVelocityX(player.body.velocity.x + 160);
-            }
-
-            if (cursors.up.isDown && player.body.touching.down) {
-                player.setVelocityY(-330);
-            }
-
-            speed += 0.1; // Увеличиваем скорость со временем
-        }
-
-        function collectStar(player, star) {
-            star.disableBody(true, true);
-            score += 10;
-            scoreText.setText('Score: ' + score);
-        }
-
-        function hitBomb(player, bomb) {
-            this.physics.pause();
-            player.setTint(0xff0000);
-            player.anims.play('turn');
-            gameOver = true;
-            onGameOver(score);
-        }
-
-        function shareScore(score) {
-            Telegram.WebApp.sendData(JSON.stringify({ score: score }));
-        }
-
-        function onGameOver(score) {
-            shareScore(score);
-            Telegram.WebApp.close();
-        }
+        telegram.expand();
     </script>
 </body>
 </html>
